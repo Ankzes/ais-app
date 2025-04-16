@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Расчёт капельного полива</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Расчёт капельного полива</h1>
+  </header>
+
+  <section id="calc-section">
+    <!-- Выбор участка -->
+    <div class="calc-form">
+      <h2>Выбор участка</h2>
+      <div class="input-mode">
+        <label>
+          <input type="radio" name="field-mode" value="db" checked>
+          <span>База данных</span>
+        </label>
+        <label>
+          <input type="radio" name="field-mode" value="manual">
+          <span>Ручной ввод</span>
+        </label>
+      </div>
+
+      <div id="field-db-input" class="mode-input">
+        <div class="form-row">
+          <label for="field-id">Участок:</label>
+          <select id="field-id" name="field-id">
+            <option value="">-- Выберите участок --</option>
+          </select>
+        </div>
+        <div class="form-row field-actions" style="display: none;">
+          <button type="button" id="update-field-btn" class="action-btn">Обновить участок</button>
+          <button type="button" id="delete-field-btn" class="action-btn delete-btn">Удалить участок</button>
+        </div>
+        <div class="form-row field-edit-form" style="display: none;">
+          <label for="field-edit-name">Название участка:</label>
+          <input type="text" id="field-edit-name" name="field-edit-name" placeholder="Новое название участка" />
+          <label for="field-edit-area">Площадь участка (м²):</label>
+          <input type="number" id="field-edit-area" name="field-edit-area" 
+                min="100" max="100000" step="100"
+                placeholder="Новая площадь" />
+          <label for="field-edit-soil">Тип почвы:</label>
+          <select id="field-edit-soil" name="field-edit-soil">
+            <option value="">-- Выберите тип почвы --</option>
+          </select>
+          <div class="edit-actions">
+            <button type="button" id="save-field-btn" class="action-btn">Сохранить</button>
+            <button type="button" id="cancel-edit-btn" class="action-btn">Отмена</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="field-manual-input" class="mode-input" style="display: none;">
+        <div class="form-row">
+          <label for="field-name-manual">Название участка:</label>
+          <input type="text" id="field-name-manual" name="field-name-manual" placeholder="Поле №1" />
+        </div>
+        <div class="form-row">
+          <label for="field-area-manual">Площадь участка (м²):</label>
+          <input type="number" id="field-area-manual" name="field-area-manual" 
+                 min="10" max="100000" step="100"
+                 placeholder="Например, 10000" />
+        </div>
+        <div class="form-row">
+          <label for="soil-type-manual">Тип почвы:</label>
+          <select id="soil-type-manual" name="soil-type-manual">
+            <option value="">-- Выберите тип почвы --</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="soil-output-manual">Норма вылива (л/ч):</label>
+          <input type="text" id="soil-output-manual" name="soil-output-manual" readonly placeholder="Выберите тип почвы" />
+        </div>
+      </div>
+
+      <div id="field-auto-fill">
+        <div class="form-row">
+          <label for="field-area">Площадь участка (м²):</label>
+          <input type="number" id="field-area" name="field-area" step="any" readonly placeholder="Автозаполнение" />
+        </div>
+        <div class="form-row">
+          <label for="soil-type">Тип почвы:</label>
+          <input type="text" id="soil-type" name="soil-type" readonly placeholder="Автозаполнение" />
+        </div>
+        <div class="form-row">
+          <label for="soil-output">Норма вылива (л/ч):</label>
+          <input type="text" id="soil-output" name="soil-output" readonly placeholder="Автозаполнение" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Выбор культуры -->
+    <div class="calc-form">
+      <h2>Выбор культуры</h2>
+      <div class="input-mode">
+        <label>
+          <input type="radio" name="crop-mode" value="db" checked>
+          <span>База данных</span>
+        </label>
+        <label>
+          <input type="radio" name="crop-mode" value="manual">
+          <span>Ручной ввод</span>
+        </label>
+      </div>
+
+      <div id="crop-db-input" class="mode-input">
+        <div class="form-row">
+          <label for="crop-id">Культура:</label>
+          <select id="crop-id" name="crop-id">
+            <option value="">-- Выберите культуру --</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="crop-manual-input" class="mode-input" style="display: none;">
+        <div class="form-row">
+          <label for="crop-name-manual">Название культуры:</label>
+          <input type="text" id="crop-name-manual" name="crop-name-manual" placeholder="Томаты" />
+        </div>
+        <div class="form-row">
+          <label for="dripper-spacing-manual">Шаг капельниц (см):</label>
+          <input type="number" id="dripper-spacing-manual" name="dripper-spacing-manual" 
+                 min="10" max="100" step="1"
+                 placeholder="Например, 30" />
+        </div>
+        <div class="form-row">
+          <label for="row-spacing-manual">Расстояние между рядами (м):</label>
+          <input type="number" id="row-spacing-manual" name="row-spacing-manual" 
+                 min="0.5" max="5.0" step="0.1"
+                 placeholder="Например, 1.4" />
+        </div>
+      </div>
+
+      <div id="crop-auto-fill">
+        <div class="form-row">
+          <label for="dripper-spacing">Шаг капельниц (см):</label>
+          <input type="text" id="dripper-spacing" name="dripper-spacing" readonly placeholder="Автозаполнение" />
+        </div>
+        <div class="form-row">
+          <label for="row-spacing">Расстояние между рядами (м):</label>
+          <input type="text" id="row-spacing" name="row-spacing" readonly placeholder="Автозаполнение" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Параметры работы -->
+    <div class="calc-form">
+      <h2>Параметры работы</h2>
+      <div class="form-row">
+        <label for="operation-time">Время работы системы (ч/сутки):</label>
+        <input type="number" id="operation-time" name="operation-time" 
+               min="1" max="24" step="0.5" value="16" />
+      </div>
+    </div>
+
+    <div class="calc-button">
+      <button id="calculate-btn">Рассчитать</button>
+    </div>
+  </section>
+
+  <section id="result-section">
+    <div class="section-title">Результаты расчёта</div>
+    <div id="result-container">
+      <p>Длина оросительных трубок (м): <span id="length-tubing">—</span></p>
+      <p>Количество капельниц: <span id="number-of-drippers">—</span></p>
+      <p>Расход воды (л/ч): <span id="hourly-water-rate">—</span></p>
+      <p>Суточный расход воды (л): <span id="daily-water-rate">—</span></p>
+      <p>Время работы системы (ч/сутки): <span id="operation-time-output">—</span></p>
+      <p>Используемое расстояние между рядами (м): <span id="result-row-spacing">—</span></p>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Система "Цифровой двойник: Расчёт капельного полива"</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
